@@ -1,0 +1,15 @@
+# clasp's local pointer to the script project. Not a credential, but there is no
+# reason to publish the project ID in a public repo.
+apps-script/.clasp.json
+
+# `clasp pull` re-downloads the server code as Code.js next to Code.gs. Committing
+# it means the next push sends both, and every function is declared twice.
+apps-script/Code.js
+
+# Screenshots and scratch files
+WhatsApp Image*
+*.tmp
+
+node_modules/
+Thumbs.db
+.DS_Store

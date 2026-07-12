@@ -1,0 +1,4 @@
+# Everything except the script and its manifest stays local.
+**/**
+!Code.gs
+!appsscript.json
