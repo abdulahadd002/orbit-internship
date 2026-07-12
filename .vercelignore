@@ -1,0 +1,8 @@
+# Vercel serves whatever it is given as static files. Without this, the backend
+# source and the internal ops notes would be fetchable from the public payment
+# domain — apply.orbitpk.com/apps-script/Code.gs and so on. Only the page ships.
+apps-script
+SETUP.md
+README.md
+.claspignore
+.gitignore
