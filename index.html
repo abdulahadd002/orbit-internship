@@ -398,6 +398,161 @@
 
   .hint { font-size: 11.5px; color: var(--text-3); }
 
+  /* ═══════════ Date field ═══════════
+     A native <input type="date"> opens a picker drawn by the browser, not by
+     the page — no CSS reaches inside it, so it lands on a dark form as a white
+     box. This is a real control instead: the whole field is the trigger, and
+     the panel is ours. */
+  .datefield { position: relative; }
+
+  .date-trigger {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 14px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 14px;
+    line-height: 1.5;
+    text-align: left;
+    cursor: pointer;
+    transition: border-color 0.18s, box-shadow 0.18s;
+  }
+  .date-trigger:hover { border-color: #2c2c2c; }
+  :root[data-theme="light"] .date-trigger:hover { border-color: #c9ccd1; }
+  .date-trigger:focus-visible,
+  .date-trigger[aria-expanded="true"] {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-dim);
+  }
+  .date-trigger .date-text { flex: 1; }
+  .date-trigger.empty .date-text { color: var(--text-3); }
+  .date-trigger svg {
+    width: 15px; height: 15px;
+    flex-shrink: 0;
+    fill: none;
+    stroke: var(--text-3);
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    transition: stroke 0.18s;
+  }
+  .date-trigger:hover svg,
+  .date-trigger[aria-expanded="true"] svg { stroke: var(--accent); }
+
+  .invalid .date-trigger { border-color: var(--err); }
+
+  /* the panel */
+  .cal {
+    position: absolute;
+    z-index: 40;
+    top: calc(100% + 8px);
+    left: 0;
+    width: min(292px, calc(100vw - 48px));
+    padding: 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    box-shadow: 0 20px 48px rgba(0, 0, 0, 0.55);
+    animation: calIn 0.16s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  :root[data-theme="light"] .cal { box-shadow: 0 20px 48px rgba(0, 0, 0, 0.13); }
+  .cal[hidden] { display: none; }
+  .cal.up { top: auto; bottom: calc(100% + 8px); }   /* flip when there's no room below */
+
+  @keyframes calIn { from { opacity: 0; transform: translateY(-6px); } }
+  @media (prefers-reduced-motion: reduce) { .cal { animation: none; } }
+
+  .cal-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .cal-title { font-size: 13px; font-weight: 700; letter-spacing: -0.01em; }
+  .cal-nav { display: flex; gap: 5px; }
+  .cal-nav button {
+    width: 27px; height: 27px;
+    display: grid;
+    place-items: center;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    color: var(--text-2);
+    cursor: pointer;
+    transition: border-color 0.16s, color 0.16s, opacity 0.16s;
+  }
+  .cal-nav button:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+  .cal-nav button:disabled { opacity: 0.3; cursor: not-allowed; }
+  .cal-nav button:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--accent-dim); }
+  .cal-nav svg { width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; }
+
+  .cal-dow { display: grid; grid-template-columns: repeat(7, 1fr); margin-bottom: 3px; }
+  .cal-dow span {
+    padding: 5px 0;
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 9.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-3);
+  }
+
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+  .cal-day {
+    min-height: 34px;
+    display: grid;
+    place-items: center;
+    background: none;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    font-family: var(--sans);
+    font-size: 12.5px;
+    color: var(--text-2);
+    font-variant-numeric: tabular-nums;
+    cursor: pointer;
+    transition: background 0.14s, color 0.14s, border-color 0.14s;
+  }
+  .cal-day:hover:not(:disabled) { background: var(--surface-2); color: var(--text); }
+  .cal-day:focus-visible { outline: none; border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-dim); }
+  .cal-day.out { opacity: 0.4; }                                   /* spill from the neighbouring month */
+  .cal-day:disabled { opacity: 0.22; cursor: not-allowed; }
+  .cal-day.today { border-color: var(--border); color: var(--text); font-weight: 700; }
+  .cal-day.sel {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #0a0a0a;
+    font-weight: 700;
+    opacity: 1;
+  }
+  .cal-day.sel:hover { background: var(--accent-hover); color: #0a0a0a; }
+
+  .cal-foot {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 11px;
+    padding-top: 11px;
+    border-top: 1px solid var(--border);
+  }
+  .cal-foot button {
+    padding: 3px 2px;
+    background: none;
+    border: none;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-3);
+    cursor: pointer;
+    transition: color 0.16s;
+  }
+  .cal-foot button:hover,
+  .cal-foot button:focus-visible { outline: none; color: var(--accent); }
+
   /* honeypot — off-screen, never focusable, invisible to people */
   .hp {
     position: absolute !important;
@@ -1161,8 +1316,44 @@
             </div>
 
             <div class="field" data-req>
-              <label for="start">Earliest start date <span class="req">*</span></label>
-              <input type="date" id="start" name="start" required />
+              <label id="start-label">Earliest start date <span class="req">*</span></label>
+
+              <div class="datefield" id="start-field" data-placeholder="Select a date">
+                <input type="hidden" id="start" name="start" />
+
+                <button type="button" class="date-trigger empty"
+                        aria-haspopup="dialog" aria-expanded="false" aria-labelledby="start-label">
+                  <span class="date-text">Select a date</span>
+                  <svg viewBox="0 0 16 16" aria-hidden="true">
+                    <rect x="1.75" y="3" width="12.5" height="11.25" rx="2.5" />
+                    <path d="M1.75 6.6h12.5M5.2 1.75v2.6M10.8 1.75v2.6" />
+                  </svg>
+                </button>
+
+                <div class="cal" role="dialog" aria-label="Choose a start date" hidden>
+                  <div class="cal-head">
+                    <span class="cal-title"></span>
+                    <span class="cal-nav">
+                      <button type="button" data-nav="prev" aria-label="Previous month">
+                        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3.2 5.2 8l4.8 4.8" /></svg>
+                      </button>
+                      <button type="button" data-nav="next" aria-label="Next month">
+                        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 3.2 10.8 8 6 12.8" /></svg>
+                      </button>
+                    </span>
+                  </div>
+                  <div class="cal-dow" aria-hidden="true">
+                    <span>Mo</span><span>Tu</span><span>We</span><span>Th</span>
+                    <span>Fr</span><span>Sa</span><span>Su</span>
+                  </div>
+                  <div class="cal-grid"></div>
+                  <div class="cal-foot">
+                    <button type="button" data-cal="clear">Clear</button>
+                    <button type="button" data-cal="today">Today</button>
+                  </div>
+                </div>
+              </div>
+
               <span class="err-msg">Pick a start date.</span>
             </div>
           </div>
@@ -1302,8 +1493,44 @@
             </div>
 
             <div class="field" data-req>
-              <label for="c-date">Date of payment <span class="req">*</span></label>
-              <input type="date" id="c-date" name="paidOn" required />
+              <label id="cdate-label">Date of payment <span class="req">*</span></label>
+
+              <div class="datefield" id="cdate-field" data-placeholder="Select a date">
+                <input type="hidden" id="c-date" name="paidOn" />
+
+                <button type="button" class="date-trigger empty"
+                        aria-haspopup="dialog" aria-expanded="false" aria-labelledby="cdate-label">
+                  <span class="date-text">Select a date</span>
+                  <svg viewBox="0 0 16 16" aria-hidden="true">
+                    <rect x="1.75" y="3" width="12.5" height="11.25" rx="2.5" />
+                    <path d="M1.75 6.6h12.5M5.2 1.75v2.6M10.8 1.75v2.6" />
+                  </svg>
+                </button>
+
+                <div class="cal" role="dialog" aria-label="Choose the date you paid" hidden>
+                  <div class="cal-head">
+                    <span class="cal-title"></span>
+                    <span class="cal-nav">
+                      <button type="button" data-nav="prev" aria-label="Previous month">
+                        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3.2 5.2 8l4.8 4.8" /></svg>
+                      </button>
+                      <button type="button" data-nav="next" aria-label="Next month">
+                        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 3.2 10.8 8 6 12.8" /></svg>
+                      </button>
+                    </span>
+                  </div>
+                  <div class="cal-dow" aria-hidden="true">
+                    <span>Mo</span><span>Tu</span><span>We</span><span>Th</span>
+                    <span>Fr</span><span>Sa</span><span>Su</span>
+                  </div>
+                  <div class="cal-grid"></div>
+                  <div class="cal-foot">
+                    <button type="button" data-cal="clear">Clear</button>
+                    <button type="button" data-cal="today">Today</button>
+                  </div>
+                </div>
+              </div>
+
               <span class="err-msg">Pick the date you paid.</span>
             </div>
           </div>
@@ -1489,6 +1716,219 @@
     }
     if (!data.ok) throw new Error(data.error || 'Something went wrong. Please try again.');
     return data;
+  }
+
+  /* ══════════════════════════════════════════════════════════════════
+     Date picker
+
+     The native <input type="date"> picker is drawn by the browser, not the
+     page, so it cannot be themed — it arrives as a white box on a black form
+     and only its little corner icon opens it. This is the real thing: click
+     anywhere on the field, and the panel is styled from the same tokens as
+     everything else.
+     ══════════════════════════════════════════════════════════════════ */
+  const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June',
+                  'July', 'August', 'September', 'October', 'November', 'December'];
+
+  const pad = (n) => String(n).padStart(2, '0');
+
+  /* Deliberately NOT toISOString(): that is UTC, and Pakistan is UTC+5. Between
+     midnight and 5am it hands back yesterday's date. */
+  const iso = (d) => d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+
+  const parseISO = (s) => {
+    const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(s || '').trim());
+    return m ? new Date(+m[1], +m[2] - 1, +m[3]) : null;
+  };
+
+  const pretty = (d) => d.getDate() + ' ' + MONTHS[d.getMonth()] + ' ' + d.getFullYear();
+
+  const sameDay = (a, b) =>
+    !!a && !!b &&
+    a.getFullYear() === b.getFullYear() &&
+    a.getMonth() === b.getMonth() &&
+    a.getDate() === b.getDate();
+
+  const todayLocal = () => {
+    const n = new Date();
+    return new Date(n.getFullYear(), n.getMonth(), n.getDate());
+  };
+
+  function datePicker(root) {
+    const input   = root.querySelector('input[type="hidden"]');
+    const trigger = root.querySelector('.date-trigger');
+    const text    = root.querySelector('.date-text');
+    const panel   = root.querySelector('.cal');
+    const title   = panel.querySelector('.cal-title');
+    const grid    = panel.querySelector('.cal-grid');
+    const prev    = panel.querySelector('[data-nav="prev"]');
+    const next    = panel.querySelector('[data-nav="next"]');
+
+    const min = parseISO(root.dataset.min);
+    const max = parseISO(root.dataset.max);
+    const placeholder = root.dataset.placeholder || 'Select a date';
+
+    let selected = parseISO(input.value);
+    let cursor = new Date();
+    let open = false;
+
+    const blocked = (d) => (min && d < min) || (max && d > max);
+
+    function paint() {
+      title.textContent = MONTHS[cursor.getMonth()] + ' ' + cursor.getFullYear();
+
+      // Grey out the arrows rather than letting people wander into months
+      // where every single day is disabled.
+      prev.disabled = !!(min && new Date(cursor.getFullYear(), cursor.getMonth(), 0) < min);
+      next.disabled = !!(max && new Date(cursor.getFullYear(), cursor.getMonth() + 1, 1) > max);
+
+      const first = new Date(cursor.getFullYear(), cursor.getMonth(), 1);
+      const lead = (first.getDay() + 6) % 7;          // Monday-first
+      const start = new Date(first);
+      start.setDate(1 - lead);
+
+      const today = todayLocal();
+      const frag = document.createDocumentFragment();
+
+      for (let i = 0; i < 42; i++) {
+        const d = new Date(start.getFullYear(), start.getMonth(), start.getDate() + i);
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'cal-day';
+        b.textContent = d.getDate();
+        b.dataset.iso = iso(d);
+        b.setAttribute('aria-label', pretty(d));
+
+        if (d.getMonth() !== cursor.getMonth()) b.classList.add('out');
+        if (sameDay(d, today)) b.classList.add('today');
+        if (sameDay(d, selected)) { b.classList.add('sel'); b.setAttribute('aria-current', 'date'); }
+        if (blocked(d)) b.disabled = true;
+
+        frag.appendChild(b);
+      }
+
+      grid.innerHTML = '';
+      grid.appendChild(frag);
+    }
+
+    function show() {
+      if (open) return;
+      open = true;
+      cursor = new Date((selected || todayLocal()).getFullYear(), (selected || todayLocal()).getMonth(), 1);
+      panel.hidden = false;
+      trigger.setAttribute('aria-expanded', 'true');
+      paint();
+
+      // Flip above the field if the panel would run off the bottom.
+      panel.classList.remove('up');
+      if (panel.getBoundingClientRect().bottom > window.innerHeight - 8) {
+        panel.classList.add('up');
+      }
+
+      const land = grid.querySelector('.cal-day.sel:not(:disabled)')
+                || grid.querySelector('.cal-day.today:not(:disabled)')
+                || grid.querySelector('.cal-day:not(:disabled):not(.out)');
+      if (land) land.focus();
+
+      document.addEventListener('mousedown', onOutside, true);
+      document.addEventListener('keydown', onKey, true);
+    }
+
+    function hide(refocus) {
+      if (!open) return;
+      open = false;
+      panel.hidden = true;
+      trigger.setAttribute('aria-expanded', 'false');
+      document.removeEventListener('mousedown', onOutside, true);
+      document.removeEventListener('keydown', onKey, true);
+      if (refocus) trigger.focus();
+    }
+
+    function onOutside(e) { if (!root.contains(e.target)) hide(false); }
+
+    function onKey(e) {
+      if (e.key === 'Escape') { e.preventDefault(); hide(true); return; }
+
+      const el = document.activeElement;
+      if (!el || !el.classList.contains('cal-day')) return;
+
+      const step = { ArrowLeft: -1, ArrowRight: 1, ArrowUp: -7, ArrowDown: 7 }[e.key];
+      if (!step) return;
+      e.preventDefault();
+
+      const from = parseISO(el.dataset.iso);
+      const to = new Date(from.getFullYear(), from.getMonth(), from.getDate() + step);
+      if (blocked(to)) return;
+
+      if (to.getMonth() !== cursor.getMonth() || to.getFullYear() !== cursor.getFullYear()) {
+        cursor = new Date(to.getFullYear(), to.getMonth(), 1);
+        paint();
+      }
+      const cell = grid.querySelector('[data-iso="' + iso(to) + '"]');
+      if (cell) cell.focus();
+    }
+
+    function render() {
+      if (selected) {
+        text.textContent = pretty(selected);
+        trigger.classList.remove('empty');
+      } else {
+        text.textContent = placeholder;
+        trigger.classList.add('empty');
+      }
+    }
+
+    /* Setting .value in code fires nothing, so the completion meter and the
+       "clear the error once it's valid" handler would never hear about it. */
+    function commit(d) {
+      selected = d;
+      input.value = d ? iso(d) : '';
+      render();
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+      input.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+
+    trigger.addEventListener('click', () => (open ? hide(false) : show()));
+
+    // A <label for=…> can't point at a button, so wire the label up by hand —
+    // people expect clicking a field's label to open the field.
+    const lbl = document.getElementById(trigger.getAttribute('aria-labelledby'));
+    if (lbl) lbl.addEventListener('click', () => { if (!open) show(); });
+
+    prev.addEventListener('click', () => { cursor.setMonth(cursor.getMonth() - 1); paint(); });
+    next.addEventListener('click', () => { cursor.setMonth(cursor.getMonth() + 1); paint(); });
+
+    grid.addEventListener('click', (e) => {
+      const b = e.target.closest('.cal-day');
+      if (!b || b.disabled) return;
+      commit(parseISO(b.dataset.iso));
+      hide(true);
+    });
+
+    panel.querySelector('[data-cal="today"]').addEventListener('click', () => {
+      const t = todayLocal();
+      if (blocked(t)) return;
+      commit(t);
+      hide(true);
+    });
+
+    panel.querySelector('[data-cal="clear"]').addEventListener('click', () => {
+      commit(null);
+      hide(true);
+    });
+
+    render();
+
+    // Quietly seed a default, without firing events or stealing focus on load.
+    return {
+      preset: function (isoStr) {
+        const d = parseISO(isoStr);
+        if (!d || blocked(d)) return;
+        selected = d;
+        input.value = iso(d);
+        render();
+      }
+    };
   }
 
   /* ══════════════════════════════════════════════════════════════════
@@ -1928,11 +2368,13 @@
 
     if (DEMO) $('demo-banner').classList.add('show');
 
-    // No start dates in the past; default the payment date to today.
-    const today = new Date().toISOString().slice(0, 10);
-    $('start').min = today;
-    $('c-date').max = today;
-    $('c-date').value = today;
+    // Bounds have to be set before the pickers read them.
+    const today = iso(todayLocal());
+    $('start-field').dataset.min = today;   // you cannot start in the past
+    $('cdate-field').dataset.max = today;   // you cannot have paid in the future
+
+    datePicker($('start-field'));
+    datePicker($('cdate-field')).preset(today);   // you almost certainly paid today
 
     // Resume. A ?ref= in the URL wins — that is the link from the
     // confirmation email, and it has to work on a device that has never
