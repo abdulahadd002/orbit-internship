@@ -4,26 +4,66 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>ORBIT Internship Application</title>
+<meta name="description" content="A three-month, hands-on internship in Islamabad. Ship real client work, mentored directly by the founders. Applications are open." />
+<meta name="theme-color" content="#f8f9fa" />
+
+<!-- The mark again, as the tab icon. Black tile so it holds up against a light
+     browser chrome; strokes thickened because 16px is unforgiving. -->
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='13' fill='%230a0a0a'/><path d='M13.8 28.2A21 21 0 1 0 22.9 16.2' fill='none' stroke='%23ffffff' stroke-width='5'/><circle cx='17.2' cy='21.4' r='5' fill='none' stroke='%23ff751f' stroke-width='4.5'/></svg>" />
+
+<!-- This link will mostly be shared over WhatsApp. Without a preview card it
+     arrives as a naked vercel.app URL asking for PKR 3,000 — which reads exactly
+     like a phishing link. With one, it arrives with the ORBIT logo on it. -->
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="ORBIT" />
+<meta property="og:title" content="ORBIT Internship — applications open" />
+<meta property="og:description" content="Three months of real client work, mentored by the founders. Remote or hybrid, Islamabad. Certificate on completion." />
+<meta property="og:url" content="https://orbit-internship.vercel.app/" />
+<meta property="og:image" content="https://orbit-internship.vercel.app/orbit-logo.jpg" />
+<meta property="og:image:width" content="1563" />
+<meta property="og:image:height" content="1563" />
+<meta property="og:image:alt" content="The ORBIT logo" />
+<meta name="twitter:card" content="summary_large_image" />
 
 <style>
-  /* ═══════════ ORBIT design tokens (from the live site) ═══════════ */
+  /* ═══════════ ORBIT design tokens ═══════════ */
   :root {
-    --bg: #0a0a0a;
-    --surface: #111111;
-    --surface-2: #161616;
-    --border: #1e1e1e;
-    --border-soft: rgba(255, 255, 255, 0.06);
-    --text: #ffffff;
-    --text-2: #a0a0a0;
-    --text-3: #606060;
+    /* Light is the default. */
+    --bg: #f8f9fa;
+    --surface: #ffffff;
+    --surface-2: #f1f3f5;
+    --border: #e3e5e9;
+    --border-hover: #c9ccd1;
+    --border-soft: rgba(0, 0, 0, 0.06);
+    --text: #0f0f0f;
+    --text-2: #4a4a4a;
+    --text-3: #71757a;
+
+    /* Brand orange, for FILLS — buttons, borders, focus rings, chips. */
     --accent: #ff751f;
-    --accent-hover: #ff8c42;
-    --accent-dim: rgba(255, 117, 31, 0.08);
-    --accent-glow: rgba(255, 117, 31, 0.2);
-    --ok: #22c55e;
-    --ok-dim: rgba(34, 197, 94, 0.08);
-    --err: #f0553f;
-    --err-dim: rgba(240, 85, 63, 0.08);
+    --accent-hover: #f26a12;
+    --accent-dim: rgba(255, 117, 31, 0.09);
+    --accent-glow: rgba(255, 117, 31, 0.22);
+    --accent-line: rgba(255, 117, 31, 0.28);
+
+    /* ...and the INK versions, for TEXT. The brand orange is only 2.5:1 against
+       white — fine as a fill, unreadable as a word. Same family, dark enough to
+       actually read: #c24700 is 4.8:1, which clears AA. Ditto the status colours. */
+    --accent-ink: #c24700;
+
+    --ok: #16a34a;
+    --ok-ink: #15803d;
+    --ok-dim: rgba(22, 163, 74, 0.09);
+
+    --err: #e03b22;
+    --err-ink: #b3301c;
+    --err-dim: rgba(224, 59, 34, 0.08);
+
+    /* Text sitting ON an orange fill. Black is 7.3:1, white would be 2.7:1 —
+       so the button text stays dark on both themes. */
+    --on-accent: #0a0a0a;
+
+    --shadow: 0 20px 48px rgba(0, 0, 0, 0.13);
 
     --mono: ui-monospace, "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
     --sans: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -32,16 +72,35 @@
     --r-lg: 16px;
   }
 
-  :root[data-theme="light"] {
-    --bg: #f8f9fa;
-    --surface: #ffffff;
-    --surface-2: #f1f3f5;
-    --border: #e0e2e6;
-    --border-soft: rgba(0, 0, 0, 0.06);
-    --text: #0f0f0f;
-    --text-2: #4a4a4a;
-    --text-3: #7a7a7a;
-    --accent-dim: rgba(255, 117, 31, 0.06);
+  :root[data-theme="dark"] {
+    --bg: #0a0a0a;
+    --surface: #111111;
+    --surface-2: #161616;
+    --border: #1e1e1e;
+    --border-hover: #2c2c2c;
+    --border-soft: rgba(255, 255, 255, 0.06);
+    --text: #ffffff;
+    --text-2: #a0a0a0;
+    --text-3: #606060;
+
+    --accent-hover: #ff8c42;
+    --accent-dim: rgba(255, 117, 31, 0.08);
+    --accent-glow: rgba(255, 117, 31, 0.2);
+    --accent-line: rgba(255, 117, 31, 0.16);
+
+    /* Against near-black the bright orange reads at 8.5:1, so no ink variant
+       is needed — the brand colour is the readable one here. */
+    --accent-ink: #ff8c42;
+
+    --ok: #22c55e;
+    --ok-ink: #22c55e;
+    --ok-dim: rgba(34, 197, 94, 0.08);
+
+    --err: #f0553f;
+    --err-ink: #f0553f;
+    --err-dim: rgba(240, 85, 63, 0.08);
+
+    --shadow: 0 20px 48px rgba(0, 0, 0, 0.55);
   }
 
   * { box-sizing: border-box; }
@@ -83,8 +142,10 @@
     margin-bottom: 28px;
   }
   .mark svg { width: 100%; height: 100%; overflow: visible; }
-  .mark .ring { fill: none; stroke: var(--text); stroke-width: 7; }
-  .mark .dot { fill: var(--accent); }
+  /* The orbit path — open at the upper left, where the satellite rides. */
+  .mark .ring { fill: none; stroke: var(--text); stroke-width: 2.9; }
+  /* The satellite is a ring, not a disc. */
+  .mark .sat { fill: none; stroke: var(--accent); stroke-width: 3.4; }
   /* ambient orbit behind the mark */
   .mark::before {
     content: "";
@@ -92,7 +153,7 @@
     left: 50%; top: 50%;
     width: 190px; height: 190px;
     margin: -95px 0 0 -95px;
-    border: 1px dashed rgba(255, 117, 31, 0.16);
+    border: 1px dashed var(--accent-line);
     border-radius: 50%;
     animation: spin 34s linear infinite;
     pointer-events: none;
@@ -107,7 +168,7 @@
     font-size: 10.5px;
     letter-spacing: 0.24em;
     text-transform: uppercase;
-    color: var(--accent);
+    color: var(--accent-ink);
     display: flex;
     align-items: center;
     gap: 9px;
@@ -128,7 +189,7 @@
     font-weight: 800;
     text-wrap: balance;
   }
-  .rail h1 em { font-style: normal; color: var(--accent); }
+  .rail h1 em { font-style: normal; color: var(--accent-ink); }
 
   .rail .lede {
     margin: 14px 0 0;
@@ -209,7 +270,7 @@
   }
   .step.is-active .s-num {
     border-color: var(--accent);
-    color: var(--accent);
+    color: var(--accent-ink);
     box-shadow: 0 0 0 3px var(--accent-dim);
   }
   .step.is-done .s-num {
@@ -221,8 +282,8 @@
     content: "";
     position: absolute;
     width: 8px; height: 4px;
-    border-left: 1.7px solid var(--bg);
-    border-bottom: 1.7px solid var(--bg);
+    border-left: 1.7px solid var(--on-accent);
+    border-bottom: 1.7px solid var(--on-accent);
     transform: rotate(-45deg);
     margin-top: -2px;
   }
@@ -332,7 +393,7 @@
     align-items: baseline;
     gap: 6px;
   }
-  label .req { color: var(--accent); }
+  label .req { color: var(--accent-ink); }
   label .opt {
     font-family: var(--mono);
     font-size: 9.5px;
@@ -366,10 +427,7 @@
 
   input::placeholder, textarea::placeholder { color: var(--text-3); }
 
-  input:hover, select:hover, textarea:hover { border-color: #2c2c2c; }
-  :root[data-theme="light"] input:hover,
-  :root[data-theme="light"] select:hover,
-  :root[data-theme="light"] textarea:hover { border-color: #c9ccd1; }
+  input:hover, select:hover, textarea:hover { border-color: var(--border-hover); }
 
   input:focus-visible,
   select:focus-visible,
@@ -421,8 +479,7 @@
     cursor: pointer;
     transition: border-color 0.18s, box-shadow 0.18s;
   }
-  .date-trigger:hover { border-color: #2c2c2c; }
-  :root[data-theme="light"] .date-trigger:hover { border-color: #c9ccd1; }
+  .date-trigger:hover { border-color: var(--border-hover); }
   .date-trigger:focus-visible,
   .date-trigger[aria-expanded="true"] {
     outline: none;
@@ -456,10 +513,9 @@
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--r-lg);
-    box-shadow: 0 20px 48px rgba(0, 0, 0, 0.55);
+    box-shadow: var(--shadow);
     animation: calIn 0.16s cubic-bezier(0.16, 1, 0.3, 1);
   }
-  :root[data-theme="light"] .cal { box-shadow: 0 20px 48px rgba(0, 0, 0, 0.13); }
   .cal[hidden] { display: none; }
   .cal.up { top: auto; bottom: calc(100% + 8px); }   /* flip when there's no room below */
 
@@ -485,7 +541,7 @@
     cursor: pointer;
     transition: border-color 0.16s, color 0.16s, opacity 0.16s;
   }
-  .cal-nav button:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+  .cal-nav button:hover:not(:disabled) { border-color: var(--accent); color: var(--accent-ink); }
   .cal-nav button:disabled { opacity: 0.3; cursor: not-allowed; }
   .cal-nav button:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--accent-dim); }
   .cal-nav svg { width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; }
@@ -524,11 +580,11 @@
   .cal-day.sel {
     background: var(--accent);
     border-color: var(--accent);
-    color: #0a0a0a;
+    color: var(--on-accent);
     font-weight: 700;
     opacity: 1;
   }
-  .cal-day.sel:hover { background: var(--accent-hover); color: #0a0a0a; }
+  .cal-day.sel:hover { background: var(--accent-hover); color: var(--on-accent); }
 
   .cal-foot {
     display: flex;
@@ -550,7 +606,7 @@
     transition: color 0.16s;
   }
   .cal-foot button:hover,
-  .cal-foot button:focus-visible { outline: none; color: var(--accent); }
+  .cal-foot button:focus-visible { outline: none; color: var(--accent-ink); }
 
   /* honeypot — off-screen, never focusable, invisible to people */
   .hp {
@@ -582,8 +638,7 @@
     cursor: pointer;
     transition: border-color 0.18s, background 0.18s;
   }
-  .track:hover { border-color: #2c2c2c; }
-  :root[data-theme="light"] .track:hover { border-color: #c9ccd1; }
+  .track:hover { border-color: var(--border-hover); }
 
   .track input { position: absolute; opacity: 0; pointer-events: none; }
 
@@ -641,12 +696,11 @@
     user-select: none;
     transition: all 0.18s;
   }
-  .chip span:hover { border-color: #2c2c2c; color: var(--text); }
-  :root[data-theme="light"] .chip span:hover { border-color: #c9ccd1; }
+  .chip span:hover { border-color: var(--border-hover); color: var(--text); }
   .chip input:checked + span {
     background: var(--accent-dim);
     border-color: var(--accent);
-    color: var(--accent);
+    color: var(--accent-ink);
   }
   .chip input:focus-visible + span { box-shadow: 0 0 0 3px var(--accent-dim); }
 
@@ -673,8 +727,8 @@
   .consent .box::after {
     content: "";
     width: 9px; height: 5px;
-    border-left: 2px solid var(--bg);
-    border-bottom: 2px solid var(--bg);
+    border-left: 2px solid var(--on-accent);
+    border-bottom: 2px solid var(--on-accent);
     transform: rotate(-45deg) scale(0);
     margin-top: -2px;
     transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1);
@@ -685,7 +739,7 @@
   }
   .consent input:checked ~ .box::after { transform: rotate(-45deg) scale(1); }
   .consent input:focus-visible ~ .box { box-shadow: 0 0 0 3px var(--accent-dim); }
-  .consent a { color: var(--accent); text-decoration: none; }
+  .consent a { color: var(--accent-ink); text-decoration: none; }
   .consent a:hover { text-decoration: underline; }
 
   /* actions */
@@ -703,7 +757,7 @@
     gap: 10px;
     padding: 13px 26px;
     background: var(--accent);
-    color: #0a0a0a;
+    color: var(--on-accent);
     border: none;
     border-radius: 99px;
     font-family: var(--sans);
@@ -730,7 +784,7 @@
     display: none;
     width: 14px; height: 14px;
     border: 2px solid rgba(10, 10, 10, 0.25);
-    border-top-color: #0a0a0a;
+    border-top-color: var(--on-accent);
     border-radius: 50%;
     animation: rot 0.7s linear infinite;
   }
@@ -748,7 +802,7 @@
 
   /* validation */
   .invalid input, .invalid select, .invalid textarea { border-color: var(--err); }
-  .err-msg { display: none; font-size: 11.5px; color: var(--err); }
+  .err-msg { display: none; font-size: 11.5px; color: var(--err-ink); }
   .invalid .err-msg { display: block; }
   #track-err, #consent-err { display: none; }
 
@@ -767,13 +821,13 @@
   .banner b { display: block; color: var(--text); font-size: 12.5px; margin-bottom: 1px; }
   .banner .ic { flex-shrink: 0; font-size: 14px; line-height: 1.35; }
   .banner.warn  { background: var(--accent-dim); border: 1px solid var(--accent); }
-  .banner.warn .ic { color: var(--accent); }
+  .banner.warn .ic { color: var(--accent-ink); }
   .banner.error { background: var(--err-dim); border: 1px solid var(--err); }
-  .banner.error .ic { color: var(--err); }
+  .banner.error .ic { color: var(--err-ink); }
   .banner code {
     font-family: var(--mono);
     font-size: 11px;
-    color: var(--accent);
+    color: var(--accent-ink);
   }
 
   /* ═══════════ Payment ═══════════ */
@@ -838,7 +892,7 @@
     font-size: 10px;
     letter-spacing: 0.2em;
     text-transform: uppercase;
-    color: var(--accent);
+    color: var(--accent-ink);
   }
   .refbox .rb-v {
     font-family: var(--mono);
@@ -906,9 +960,9 @@
     cursor: pointer;
     transition: border-color 0.18s, color 0.18s;
   }
-  .copy:hover { border-color: var(--accent); color: var(--accent); }
+  .copy:hover { border-color: var(--accent); color: var(--accent-ink); }
   .copy:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--accent-dim); }
-  .copy.done { border-color: var(--ok); color: var(--ok); }
+  .copy.done { border-color: var(--ok); color: var(--ok-ink); }
 
   /* numbered how-to-pay list */
   .howto { margin: 0; padding: 0; list-style: none; counter-reset: h; }
@@ -953,7 +1007,7 @@
   .drop:focus-visible { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-dim); }
   input[type="file"] { display: none; }
   .drop .di { font-size: 13px; color: var(--text-2); }
-  .drop .di b { color: var(--accent); font-weight: 600; }
+  .drop .di b { color: var(--accent-ink); font-weight: 600; }
   .drop .ds { font-size: 11.5px; color: var(--text-3); margin-top: 3px; }
   .drop.hide { display: none; }
 
@@ -995,8 +1049,8 @@
     cursor: pointer;
     transition: color 0.18s;
   }
-  .file .rm:hover { color: var(--err); }
-  .file .rm:focus-visible { outline: none; color: var(--err); }
+  .file .rm:hover { color: var(--err-ink); }
+  .file .rm:focus-visible { outline: none; color: var(--err-ink); }
 
   /* ═══════════ Done ═══════════ */
   .done-card {
@@ -1044,7 +1098,7 @@
     letter-spacing: 0.1em;
     color: var(--text-2);
   }
-  .done-card .ref b { color: var(--accent); font-weight: 600; }
+  .done-card .ref b { color: var(--accent-ink); font-weight: 600; }
 
   /* small text links */
   .tiny {
@@ -1062,7 +1116,7 @@
     text-underline-offset: 2px;
     cursor: pointer;
   }
-  .tiny a:hover, .linkbtn:hover { color: var(--accent); }
+  .tiny a:hover, .linkbtn:hover { color: var(--accent-ink); }
 </style>
 </head>
 <body>
@@ -1071,10 +1125,14 @@
 
   <!-- ══════════ LEFT: the brief ══════════ -->
   <aside class="rail">
-    <div class="mark" aria-hidden="true">
-      <svg viewBox="0 0 64 64">
-        <circle class="ring" cx="36" cy="36" r="18" />
-        <circle class="dot" cx="20" cy="20" r="6" />
+    <div class="mark">
+      <!-- The ORBIT mark, redrawn as vector. The source is a JPEG on a black
+           background: no transparency, so on a light page it is a black square.
+           As SVG the ring follows --text and inverts with the theme. -->
+      <svg viewBox="0 0 64 64" role="img" aria-label="ORBIT">
+        <title>ORBIT</title>
+        <path class="ring" d="M13.74 26.76 A19 19 0 1 0 21.93 15.89" />
+        <circle class="sat" cx="17.5" cy="21" r="4.4" />
       </svg>
     </div>
 
