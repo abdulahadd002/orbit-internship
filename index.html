@@ -1641,7 +1641,7 @@
       { k: 'JazzCash',  v: 'TODO — JazzCash number, or delete this line' }
     ],
 
-    SUPPORT_EMAIL: 'internships@orbitpk.com',
+    SUPPORT_EMAIL: 'info@orbitpk.com',
 
     // 5 ─ Receipt upload limits.
     MAX_UPLOAD_MB: 8,
@@ -2068,7 +2068,12 @@
       hours:      $('hours').value,
       start:      $('start').value,
       why:        $('why').value.trim(),
-      amount:     CONFIG.CURRENCY + ' ' + CONFIG.AMOUNT
+      amount:     CONFIG.CURRENCY + ' ' + CONFIG.AMOUNT,
+
+      // Tells the server whether the payment screen is actually showing bank
+      // details. Without it the confirmation email would cheerfully tell people
+      // to go and pay while the page in front of them says not to.
+      bankReady:  !BANK_UNSET
     };
 
     try {

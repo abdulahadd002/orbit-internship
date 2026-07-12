@@ -18,12 +18,15 @@ const SHEET_NAME = 'Applications';
 const DRIVE_FOLDER_ID = '';
 const RECEIPTS_FOLDER_NAME = 'ORBIT Internship Receipts';
 
-/** Where the form is hosted. Used in the applicant's email so they can
- *  come back and confirm payment from any device. Leave blank to omit. */
-const FORM_URL = '';
+/** The address applicants see, and the one their replies land in. */
+const CONTACT_EMAIL = 'info@orbitpk.com';
+
+/** Where the form is hosted. Puts a ?ref= resume link in the applicant's email,
+ *  so they can finish paying from their phone without re-filling anything. */
+const FORM_URL = 'https://abdulahadd002.github.io/orbit-internship/';
 
 /** Email you on every new application and payment. Blank = off. */
-const NOTIFY_EMAIL = '';
+const NOTIFY_EMAIL = CONTACT_EMAIL;
 
 /** Email the applicant their reference after they apply. Blank = off.
  *  Gmail allows ~100 sends/day, Workspace ~1,500. */
@@ -192,11 +195,15 @@ function handleApply(body) {
       'University: ' + body.university,
       'Track:      ' + body.track,
       '',
-      'Status: awaiting payment of ' + body.amount + '.'
-    ].join('\n')
+      'Status: awaiting payment of ' + body.amount + '.',
+      body.bankReady ? '' : 'NOTE: the payment screen is still locked — no bank details are published.'
+    ].join('\n'),
+    email
   );
 
-  if (EMAIL_APPLICANT) emailApplicant(email, name, ref, String(body.amount || ''));
+  if (EMAIL_APPLICANT) {
+    emailApplicant(email, name, ref, String(body.amount || ''), !!body.bankReady);
+  }
 
   return { ok: true, ref: ref };
 }
@@ -265,7 +272,8 @@ function handleConfirm(body) {
       'Receipt:        ' + (receiptUrl || 'none'),
       '',
       'Check this against your bank statement, then set Status to CONFIRMED.'
-    ].join('\n')
+    ].join('\n'),
+    email
   );
 
   return { ok: true, ref: ref };
@@ -318,16 +326,20 @@ function receiptsFolder() {
    Email
    ═══════════════════════════════════════════════════════════════════ */
 
-function notifyAdmin(subject, body) {
+/** @param replyTo  the applicant's address, so hitting Reply on the notification
+ *                  answers them directly instead of yourself. */
+function notifyAdmin(subject, body, replyTo) {
   if (!NOTIFY_EMAIL) return;
   try {
-    MailApp.sendEmail(NOTIFY_EMAIL, subject, body);
+    const opts = { to: NOTIFY_EMAIL, subject: subject, body: body, name: 'ORBIT intake' };
+    if (replyTo) opts.replyTo = replyTo;
+    MailApp.sendEmail(opts);
   } catch (err) {
     // Out of quota, bad address — either way, never fail the write over an email.
   }
 }
 
-function emailApplicant(email, name, ref, fee) {
+function emailApplicant(email, name, ref, fee, bankReady) {
   try {
     const back = FORM_URL ? FORM_URL + (FORM_URL.indexOf('?') > -1 ? '&' : '?') + 'ref=' + ref : '';
 
@@ -337,19 +349,42 @@ function emailApplicant(email, name, ref, fee) {
       'Thanks for applying to the ORBIT internship. Your application is saved.',
       '',
       'Your reference is: ' + ref,
-      '',
-      'To hold your seat, transfer ' + fee + ' to the account shown on the application page,',
-      'and put ' + ref + ' in the remarks field of the transfer. Then come back and confirm',
-      'the payment so we can match it to you.'
+      ''
     ];
 
-    if (back) {
-      lines.push('', 'Pick up where you left off:', back);
+    if (bankReady) {
+      lines.push(
+        'To hold your seat, transfer ' + fee + ' to the account shown on the application',
+        'page, and put ' + ref + ' in the remarks field of the transfer. That reference is',
+        'how we match your payment to you, so please do not leave it out.',
+        '',
+        'Once you have paid, come back and confirm it with your transaction ID.'
+      );
+      if (back) lines.push('', 'Pick up where you left off:', back);
+    } else {
+      // The payment screen is locked, so promising them an account to pay into
+      // would contradict the page they just came from.
+      lines.push(
+        'Please do not transfer any money yet. Payment details for this intake have',
+        'not been published — we will send them to you directly, and your place is',
+        'held in the meantime.'
+      );
     }
 
-    lines.push('', '— ORBIT');
+    lines.push('', 'Questions? Just reply to this email.', '', '— ORBIT');
 
-    MailApp.sendEmail(email, 'Your ORBIT internship reference: ' + ref, lines.join('\n'));
+    // Apps Script sends as whoever owns the script; it cannot forge a From
+    // address. replyTo is what actually gets answers into the right inbox.
+    // (To send *from* CONTACT_EMAIL you'd have to verify it in Gmail under
+    // Settings ▸ Accounts ▸ "Send mail as" and move to GmailApp — a wider scope,
+    // and a re-authorisation.)
+    MailApp.sendEmail({
+      to: email,
+      subject: 'Your ORBIT internship reference: ' + ref,
+      body: lines.join('\n'),
+      name: 'ORBIT',
+      replyTo: CONTACT_EMAIL
+    });
   } catch (err) {
     // Same as above: an email failure must never cost us the application row.
   }
