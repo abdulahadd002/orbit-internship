@@ -106,6 +106,12 @@
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; }
 
+  html {
+    /* Stops iOS inflating text when a phone is turned to landscape. */
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
   body {
     background: var(--bg);
     color: var(--text);
@@ -113,7 +119,12 @@
     line-height: 1.55;
     -webkit-font-smoothing: antialiased;
     min-height: 100vh;
+    min-height: 100dvh;              /* 100vh on mobile includes the URL bar */
+    -webkit-tap-highlight-color: transparent;
   }
+
+  /* Kills the 300ms tap delay some mobile browsers still apply. */
+  button, .track, .chip, .drop, .consent, a { touch-action: manipulation; }
 
   ::selection { background: var(--accent-glow); color: var(--text); }
 
@@ -1117,6 +1128,69 @@
     cursor: pointer;
   }
   .tiny a:hover, .linkbtn:hover { color: var(--accent-ink); }
+
+  /* ═══════════ Touch ═══════════
+     Nearly everyone reaching this page is on a phone, so these are not polish.
+     Measured on real Chromium at 320–412px. */
+  @media (max-width: 900px), (pointer: coarse) {
+
+    /* THE important one. iOS Safari zooms the entire page in whenever you focus
+       a field whose font is under 16px — so at 14px, every single tap on this
+       form would punt the applicant into a zoomed viewport they then have to
+       pinch back out of. Fourteen fields, fourteen times. 16px is the threshold;
+       there is nothing else to it. */
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="url"],
+    input[type="number"],
+    select,
+    textarea,
+    .date-trigger {
+      font-size: 16px;
+    }
+
+    /* Apple asks for 44×44 on touch targets. These were all well under. */
+
+    /* The copy buttons matter most: mistyping an IBAN is a payment that
+       vanishes for a week. They were 26px tall. */
+    .copy {
+      min-height: 44px;
+      padding: 6px 15px;
+      font-size: 10.5px;
+    }
+
+    .chip span {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+      padding: 0 17px;
+      font-size: 13.5px;
+    }
+
+    .cal { width: min(300px, calc(100vw - 40px)); padding: 12px; }
+    .cal-day { min-height: 44px; font-size: 13.5px; }
+    .cal-nav button { width: 40px; height: 40px; }
+    .cal-foot button { min-height: 44px; padding: 0 4px; font-size: 10.5px; }
+
+    .file .rm { min-width: 44px; min-height: 44px; }
+
+    /* Links inside a sentence cannot grow without breaking the line, so give
+       them a taller hit area that does not affect layout. */
+    .consent a, .tiny a, .linkbtn {
+      padding: 8px 0;
+      margin: -8px 0;
+    }
+
+    /* 11.5px is fine on a 27" monitor and mean on a phone in daylight. */
+    .hint, .err-msg { font-size: 12.5px; }
+    .row .k { font-size: 11.5px; }
+    .track .t-desc { font-size: 12px; }
+    .actions .note { font-size: 11px; }
+
+    /* smooth-scrolled elements shouldn't end up jammed against the top edge */
+    .field, fieldset, .panel { scroll-margin-top: 20px; }
+  }
 </style>
 </head>
 <body>
