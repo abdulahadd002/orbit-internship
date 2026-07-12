@@ -22,8 +22,9 @@ const RECEIPTS_FOLDER_NAME = 'ORBIT Internship Receipts';
 const CONTACT_EMAIL = 'info@orbitpk.com';
 
 /** Where the form is hosted. Puts a ?ref= resume link in the applicant's email,
- *  so they can finish paying from their phone without re-filling anything. */
-const FORM_URL = 'https://abdulahadd002.github.io/orbit-internship/';
+ *  so they can finish paying from their phone without re-filling anything.
+ *  Change this and redeploy if the site ever moves to apply.orbitpk.com. */
+const FORM_URL = 'https://orbit-internship.vercel.app';
 
 /** Email you on every new application and payment. Blank = off. */
 const NOTIFY_EMAIL = CONTACT_EMAIL;
